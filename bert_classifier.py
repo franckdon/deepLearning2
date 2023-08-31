@@ -15,7 +15,7 @@ config = {
     "learning_rate":2e-5,
     "device":torch.device("cuda" if torch.cuda.is_available() else "cpu"),
     "num_epochs":1,
-    "num_classes":8,
+    "num_classes":7,
     "max_length":128,
     "batch_size":2
 }
@@ -147,7 +147,7 @@ class CustomModel:
 
         #push to huggingface hub
         notebook_login()
-        self.model.push_to_hub("bert-classification-experience")
+        self.model.push_to_hub("bert-classification-experience2")
 
 
     def evaluation(self, dataloader, device):

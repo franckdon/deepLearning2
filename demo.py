@@ -6,7 +6,9 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 def classify_description(description):
 
-    model_name = "Donaldbassa/bert-classification-experience"
+    #model_name = "Donaldbassa/bert-classification-experience"
+
+    model_name = "Donaldbassa/bert-classification-text"
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
