@@ -1,6 +1,6 @@
 import torch
 import pandas as pd
-from transformers import BertForSequenceClassification, AdamW
+from transformers import AutoTokenizer, BertTokenizer, BertForSequenceClassification, AdamW
 from torch.utils.data import DataLoader, Dataset
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
@@ -19,8 +19,6 @@ config = {
     "max_length":128,
     "batch_size":2
 }
-MODEL_NAME = "bert-base-uncased"
-NUM_CLASSES = 8
 
 class CustomDataset(Dataset):
     def __init__(self, data, tokenizer, max_length):
@@ -85,7 +83,7 @@ class CustomModel:
         train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
         val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
-        optimizer = torch.optim.AdamW(self.model.parameters(), lr=learning_rate)
+        optimizer = AdamW(self.model.parameters(), lr=learning_rate)
         loss_fn = torch.nn.CrossEntropyLoss()
 
         self.model.to(config['device'])
@@ -143,15 +141,14 @@ class CustomModel:
                 })
 
         # Sauvegarde du modèle
-        #self.model.save_pretrained('trained_model')
+        self.model.save_pretrained('bert-classification')
+        self.tokenizer.save_pretrained('bert-classification')
         torch.save(self.model, 'bert-model.pth')
 
         #push to huggingface hub
-
-        #tokenizer = AutoTokenizer.from_pretrained(config['model_name'])
-
         notebook_login()
-        self.model.push_to_hub("bert-classification")
+        self.model.push_to_hub("bert-classification-experience")
+
 
     def evaluation(self, dataloader, device):
         self.model.eval()
@@ -173,6 +170,7 @@ class CustomModel:
 
         accuracy = num_correct / total_examples
         print(f"Validation Accuracy: {accuracy:.4f}")
+
 
 
 def main():

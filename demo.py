@@ -1,8 +1,35 @@
 import gradio as gr
+import torch
 
-def greet(name):
-    return "Hello " + name + "!"
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
-demo = gr.Interface(fn=greet, inputs="text", outputs="text")
-    
+
+def classify_description(description):
+
+    model_name = "Donaldbassa/bert-classification-experience"
+
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+    model = AutoModelForSequenceClassification.from_pretrained(model_name)
+
+    inputs = tokenizer(description, padding='max_length', truncation=True, max_length=256, return_tensors='pt')
+
+    input_ids = inputs['input_ids']
+
+    attention_mask = inputs['attention_mask']
+
+ 
+
+    with torch.no_grad():
+
+        outputs = model(input_ids, attention_mask=attention_mask)
+
+        logits = outputs.logits
+
+        predicted_class = torch.argmax(logits, dim=1).item()
+
+        return f"Classe prédite : {predicted_class}"
+
+demo = gr.Interface(fn=classify_description, inputs="text", outputs="text")
+
 demo.launch()
